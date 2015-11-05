@@ -26,17 +26,17 @@ function createTincalc(box){
 	var COLS = 5;
 	var ROWS = 4;
 	var txts = new Array(
-		new Array('7', '8', '9', '+', '('),
-		new Array('4', '5', '6', '-', ')'),
-		new Array('1', '2', '3', '&times;', '&lArr;'),
-		new Array('0', 'C', '=', '&divide;', '.')
-	);
+			new Array('7', '8', '9', '+', '('),
+			new Array('4', '5', '6', '-', ')'),
+			new Array('1', '2', '3', '&times;', '&lArr;'),
+			new Array('0', 'C', '=', '&divide;', '.')
+			);
 	var cmds = new Array(
-		new Array('7', '8', '9', '+', '('),
-		new Array('4', '5', '6', '-', ')'),
-		new Array('1', '2', '3', '*', 'back'),
-		new Array('0', 'clear', '=', '/', '.')
-	);
+			new Array('7', '8', '9', '+', '('),
+			new Array('4', '5', '6', '-', ')'),
+			new Array('1', '2', '3', '*', 'back'),
+			new Array('0', 'clear', '=', '/', '.')
+			);
 	var panel = document.createElement('div');
 	panel.style['display'] = 'table';
 	panel.style['margin'] = '10px';
@@ -51,18 +51,102 @@ function createTincalc(box){
 	box.appendChild(panel);
 }
 
-function _showMsg(msgBox, msg){
-	msgBox.innerHTML = msg;
+function _showMsg(msgBar, msg){
+	msgBar.innerHTML = msg;
 	setTimeout(
-		function(){
-			msgBox.innerHTML = '';
-		},
-		3000
-	);
+			function(){
+				msgBar.innerHTML = '';
+			},
+			3000
+			);
+}
+
+function _numPart(c){
+	return (c >= '0' && c <= '9') || c == '.';
 }
 
 function _calc(mainField, msgBar){
-	return null;
+	ex = new Array();
+	s = new Array();
+	st = mainField.innerHTML;
+	for(var i = 0; i < st.length; ){
+		if(_numPart(st[i])){
+			var le = i;
+			do
+				++ i;
+			while(i < st.length && _numPart(st[i]));
+			var num = Number(st.substr(le, i - le));
+			if(isNaN(num)){
+				_showMsg(msgBar, 'Invalid input!'); // invalid number form
+				return;
+			}
+			ex.push(num);
+		} else if(st[i] == '-' || st[i] == '+'){
+			if((i == 0 || st[i - 1] == '*' || st[i - 1] == '/'
+						|| st[i - 1] == '('))
+				ex.push(0.0);
+			var j;
+			for(j = s.length - 1; j >= 0 && s[j] != '('; j --)
+				ex.push(s[j]);
+			s.length = j + 1;
+			s.push(st[i]);
+			++ i;
+		} else if(st[i] == '*' || st[i] == '/' || st[i] == '('){
+			for(j = s.length - 1; j >= 0 && s[j] != '(' && st[j] != '-' && st[j] != '/'; j --)
+				ex.push(s[j]);
+			s.length = j + 1;
+			s.push(st[i]);
+			++ i;
+		} else if(st[i] == ')'){
+			var j;
+			for(j = s.length - 1; j >= 0 && s[j] != '('; j --)
+				ex.push(s[j]);
+			if(j == -1){
+				_showMsg(msgBar, 'Invalid input!'); // ( and ) do not match
+				return;
+			}
+			s.length = j; // pop the tails
+			++ i;
+		} else{
+			_showMsg(msgBar, 'Invalid input!'); // illegal character
+			return;
+		}
+	}
+	for(var i = s.length - 1; i >= 0; i --){
+		if(s[i] == '('){
+			_showMsg(msgBar, 'Invalid input!'); // ( and ) do not match 
+			return;
+		}
+		ex.push(s[i]);
+	}
+	s.length = 0;
+	for(var i = 0; i < ex.length; i ++){
+		if(ex[i] != '+' && ex[i] != '-' && ex[i] != '*' && ex[i] != '/'){
+			s.push(ex[i]);
+		} else{
+			if(s.length < 2){
+				_showMsg(msgBar, 'Invalid input!'); // lacking operands
+				return;
+			}
+			if(ex[i] == '+')
+				s[s.length - 2] = s[s.length - 2] + s[s.length - 1];
+			else if(ex[i] == '-')
+				s[s.length - 2] = s[s.length - 2] - s[s.length - 1];
+			else if(ex[i] == '*')
+				s[s.length - 2] = s[s.length - 2] * s[s.length - 1];
+			else if(s[s.length - 1] == 0){
+				_showMsg(msgBar, 'A division by zero occurred!');
+				return;
+			} else
+				s[s.length - 2] = s[s.length - 2] / s[s.length - 1];
+			s.pop();
+		}
+	}
+	if(s.length != 1){
+		_showMsg(msgBar, 'Invalid input!'); // surplus operands
+		return;
+	}
+	mainField.innerHTML = String(s[0]);
 }
 
 function _react(mainField, msgBar, cmd){
@@ -72,11 +156,7 @@ function _react(mainField, msgBar, cmd){
 	} else if(cmd == 'clear'){
 		mainField.innerHTML = '';
 	} else if(cmd == '='){
-		var ans = _calc(mainField);
-		if(ans == null)
-			_showMsg(msgBar, 'Invalid input!');
-		else
-			mainField.innerHTML = String(ans);
+		_calc(mainField, msgBar);
 	} else{
 		mainField.innerHTML += cmd;
 	}
