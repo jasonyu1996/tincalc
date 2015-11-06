@@ -1,14 +1,23 @@
+var _boxStyle = {
+	'background-color': '#a9a9a9',
+	'border': 'outset #dcdcdc 10px',
+	'border-radius': '40px',
+	'width': '500px'
+};
+
 var _mainFieldStyle = {
 	'width': '400px',
 	'height': '50px',
-	'background-color': 'gold',
-	'border': 'thin solid black',
+	'background-color': '#c0c0c0',
+	'border': 'groove #696969 4px',
+	'border-radius': '10px',
 	'text-align': 'left',
 	'vertical-align': 'middle',
-	'margin': '10px',
+	'margin': '20px',
 	'padding': '5px',
 	'font-family': 'monospace',
 	'font-size': '30px',
+	'font-weight': 'bold',
 	'color': '#000',
 	'cursor': 'default'
 };
@@ -16,35 +25,49 @@ var _mainFieldStyle = {
 var _msgBarStyle = {
 	'width': '400px',
 	'height': '15px',
-	'background-color': '#ffff66',
 	'text-align': 'left',
 	'vertical-align': 'middle',
-	'margin-left': '10px',
-	'margin-right': '10px',
+	'margin-left': '20px',
+	'margin-right': '20px',
 	'padding': '3px',
 	'font-family': 'sans-serif',
-	'font-size': '13px',
-	'cursor': 'default'
+	'font-size': '15px',
+	'font-weight': 'bold',
+	'cursor': 'default',
+	'border-bottom': 'thin dashed black',
+	'color': '#dc341c'
+};
+
+var _panelStyle = {
+	'display': 'table',
+	'margin': '20px',
+	'border': 'groove #708090 5px',
+	'border-radius': '5px',
+	'border-spacing': '5px'
 };
 
 var _btnStyle = {
 	'width': '50px',
 	'height': '50px',
-	'border': 'thin solid black',
-	'background-color': 'blue',
+	'border': 'outset #b0e0e6 3px',
+	'border-radius': '3px',
+	'background-color': '#33f',
 	'text-align': 'center',
 	'vertical-align': 'middle',
-	'text-style': 'bold',
+	'font-weight': 'bold',
 	'font-family': 'monospace',
-	'font-size': '20px',
+	'font-size': '25px',
+	'text-style': 'bold',
 	'color': 'black',
 	'cursor': 'pointer'
 };
 
 var _btnMouseOverStyle = {
 	'background-color': '#003366',
-	'color': 'white'
+	'color': 'white',
+	'border': 'inset #4169e1 3px',
 };
+
 
 function _setStyle(c, st){
 	for(p in st)
@@ -52,7 +75,7 @@ function _setStyle(c, st){
 }
 
 function createTincalc(box){
-	box.style['border'] = 'thick dotted black';
+	_setStyle(box, _boxStyle);
 	var mainField = document.createElement('div');
 	_setStyle(mainField, _mainFieldStyle);
 	box.appendChild(mainField);
@@ -74,9 +97,7 @@ function createTincalc(box){
 		['0', 'clear', '=', '/', '.']
 	];
 	var panel = document.createElement('div');
-	panel.style['display'] = 'table';
-	panel.style['margin'] = '10px';
-	panel.style['border-spacing'] = '5px';
+	_setStyle(panel, _panelStyle);
 	for(var i = 0; i < ROWS; i ++){
 		var row = document.createElement('div');
 		row.style['display'] = 'table-row';
