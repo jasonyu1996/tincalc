@@ -25,18 +25,18 @@ function createTincalc(box){
 	box.appendChild(msgBar);
 	var COLS = 5;
 	var ROWS = 4;
-	var txts = new Array(
-			new Array('7', '8', '9', '+', '('),
-			new Array('4', '5', '6', '-', ')'),
-			new Array('1', '2', '3', '&times;', '&lArr;'),
-			new Array('0', 'C', '=', '&divide;', '.')
-			);
-	var cmds = new Array(
-			new Array('7', '8', '9', '+', '('),
-			new Array('4', '5', '6', '-', ')'),
-			new Array('1', '2', '3', '*', 'back'),
-			new Array('0', 'clear', '=', '/', '.')
-			);
+	var txts = [ 
+			['7', '8', '9', '+', '('],
+			['4', '5', '6', '-', ')'],
+			['1', '2', '3', '&times;', '&lArr;'],
+			['0', 'C', '=', '&divide;', '.']
+			];
+	var cmds = [
+			['7', '8', '9', '+', '('],
+			['4', '5', '6', '-', ')'],
+			['1', '2', '3', '*', 'back'],
+			['0', 'clear', '=', '/', '.']
+			];
 	var panel = document.createElement('div');
 	panel.style['display'] = 'table';
 	panel.style['margin'] = '10px';
@@ -69,6 +69,7 @@ function _calc(mainField, msgBar){
 	ex = new Array();
 	s = new Array();
 	st = mainField.innerHTML;
+	var rev = false;
 	for(var i = 0; i < st.length; ){
 		if(_numPart(st[i])){
 			var le = i;
@@ -81,30 +82,52 @@ function _calc(mainField, msgBar){
 				return;
 			}
 			ex.push(num);
+			if(rev){
+				ex.push('-');
+				rev = false;
+			}
 		} else if(st[i] == '-' || st[i] == '+'){
 			if((i == 0 || st[i - 1] == '*' || st[i - 1] == '/'
-						|| st[i - 1] == '('))
-				ex.push(0.0);
-			var j;
-			for(j = s.length - 1; j >= 0 && s[j] != '('; j --)
+						|| st[i - 1] == '(')){
+				if(i == st.length - 1 || (!_numPart(st[i + 1]) && st[i + 1] != '(')){
+					_showMsg(msgBar, 'Invalid input!'); // surplus heading +/- 
+					return;
+				}
+				if(st[i] == '-'){
+					ex.push(0.0);
+					rev = true;
+				}
+			} else{
+				var j;
+				for(j = s.length - 1; j >= 0 && s[j] != '(' && s[j] != '['; j --)
+					ex.push(s[j]);
+				s.length = j + 1;
+				s.push(st[i]);
+			}
+			++ i;
+		} else if(st[i] == '*' || st[i] == '/'){
+			for(j = s.length - 1; j >= 0 && s[j] != '(' && s[j] != '[' && s[j] != '-' && s[j] != '+'; j --)
 				ex.push(s[j]);
 			s.length = j + 1;
 			s.push(st[i]);
 			++ i;
-		} else if(st[i] == '*' || st[i] == '/' || st[i] == '('){
-			for(j = s.length - 1; j >= 0 && s[j] != '(' && st[j] != '-' && st[j] != '/'; j --)
-				ex.push(s[j]);
-			s.length = j + 1;
-			s.push(st[i]);
+		} else if(st[i] == '('){
+			if(rev){
+				s.push('[');
+				rev = false;
+			} else
+				s.push('(');
 			++ i;
 		} else if(st[i] == ')'){
 			var j;
-			for(j = s.length - 1; j >= 0 && s[j] != '('; j --)
+			for(j = s.length - 1; j >= 0 && s[j] != '(' && s[j] != '['; j --)
 				ex.push(s[j]);
 			if(j == -1){
 				_showMsg(msgBar, 'Invalid input!'); // ( and ) do not match
 				return;
 			}
+			if(s[j] == '[')
+				ex.push('-');
 			s.length = j; // pop the tails
 			++ i;
 		} else{
@@ -113,7 +136,7 @@ function _calc(mainField, msgBar){
 		}
 	}
 	for(var i = s.length - 1; i >= 0; i --){
-		if(s[i] == '('){
+		if(s[i] == '(' || s[i] == '['){
 			_showMsg(msgBar, 'Invalid input!'); // ( and ) do not match 
 			return;
 		}
