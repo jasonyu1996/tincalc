@@ -1,42 +1,78 @@
+var _mainFieldStyle = {
+	'width': '400px',
+	'height': '50px',
+	'background-color': 'gold',
+	'border': 'thin solid black',
+	'text-align': 'left',
+	'vertical-align': 'middle',
+	'margin': '10px',
+	'padding': '5px',
+	'font-family': 'monospace',
+	'font-size': '30px',
+	'color': '#000',
+	'cursor': 'default'
+};
+
+var _msgBarStyle = {
+	'width': '400px',
+	'height': '15px',
+	'background-color': '#ffff66',
+	'text-align': 'left',
+	'vertical-align': 'middle',
+	'margin-left': '10px',
+	'margin-right': '10px',
+	'padding': '3px',
+	'font-family': 'sans-serif',
+	'font-size': '13px',
+	'cursor': 'default'
+};
+
+var _btnStyle = {
+	'width': '50px',
+	'height': '50px',
+	'border': 'thin solid black',
+	'background-color': 'blue',
+	'text-align': 'center',
+	'vertical-align': 'middle',
+	'text-style': 'bold',
+	'font-family': 'monospace',
+	'font-size': '20px',
+	'color': 'black',
+	'cursor': 'pointer'
+};
+
+var _btnMouseOverStyle = {
+	'background-color': '#003366',
+	'color': 'white'
+};
+
+function _setStyle(c, st){
+	for(p in st)
+		c.style[p] = st[p];
+}
+
 function createTincalc(box){
 	box.style['border'] = 'thick dotted black';
 	var mainField = document.createElement('div');
-	mainField.style['width'] = '400px';
-	mainField.style['height'] = '50px';
-	mainField.style['background-color'] = 'gold';
-	mainField.style['border'] = 'thin solid black';
-	mainField.style['text-align'] = 'left';
-	mainField.style['margin'] = '10px';
-	mainField.style['padding'] = '5px';
-	mainField.style['font-family'] = 'monospace';
-	mainField.style['font-size'] = '30px';
-	mainField.style['color'] = '#000';
+	_setStyle(mainField, _mainFieldStyle);
 	box.appendChild(mainField);
 	var msgBar = document.createElement('div');
-	msgBar.style['width'] = '400px';
-	msgBar.style['height'] = '15px';
-	msgBar.style['background-color'] = '#ffff66';
-	msgBar.style['text-align'] = 'left';
-	msgBar.style['margin-left'] = '10px';
-	msgBar.style['margin-right'] = '10px';
-	msgBar.style['padding'] = '3px';
-	msgBar.style['font-family'] = 'sans-serif';
-	msgBar.style['font-size'] = '13px';
+	_setStyle(msgBar, _msgBarStyle);
 	box.appendChild(msgBar);
 	var COLS = 5;
 	var ROWS = 4;
 	var txts = [ 
-			['7', '8', '9', '+', '('],
-			['4', '5', '6', '-', ')'],
-			['1', '2', '3', '&times;', '&lArr;'],
-			['0', 'C', '=', '&divide;', '.']
-			];
+		['7', '8', '9', '+', '('],
+		['4', '5', '6', '-', ')'],
+		['1', '2', '3', '&times;', '&lArr;'],
+		['0', 'C', '=', '&divide;', '.']
+	];
 	var cmds = [
-			['7', '8', '9', '+', '('],
-			['4', '5', '6', '-', ')'],
-			['1', '2', '3', '*', 'back'],
-			['0', 'clear', '=', '/', '.']
-			];
+		['7', '8', '9', '+', '('],
+		['4', '5', '6', '-', ')'],
+		['1', '2', '3', '*', 'back'],
+		['0', 'clear', '=', '/', '.']
+	];
 	var panel = document.createElement('div');
 	panel.style['display'] = 'table';
 	panel.style['margin'] = '10px';
@@ -58,7 +94,7 @@ function _showMsg(msgBar, msg){
 				msgBar.innerHTML = '';
 			},
 			3000
-			);
+	);
 }
 
 function _numPart(c){
@@ -188,26 +224,17 @@ function _react(mainField, msgBar, cmd){
 function _createButton(mainField, msgBar, txt, cmd){
 	var btn = document.createElement('div');
 	btn.innerHTML = txt;
+	_setStyle(btn, _btnStyle);
 	btn.style['display'] = 'table-cell';
-	btn.style['width'] = btn.style.height = '30px';
-	btn.style['border'] = 'thin solid black';
-	btn.style['background-color'] = 'blue';
-	btn.style['text-align'] = 'center';
-	btn.style['text-style'] = 'bold';
-	btn.style['font-family'] = 'monospace';
-	btn.style['font-size'] = '20px';
-	btn.style['color'] = 'black';		
 	btn.onclick = function(){
 		_react(mainField, msgBar, cmd);
 	};
-	btn.style['cursor'] = 'pointer';
 	btn.onmouseover = function(){
-		btn.style['background-color'] = '#003366';		
-		btn.style['color'] = 'white';		
+		_setStyle(btn, _btnMouseOverStyle);
 	};
 	btn.onmouseout = function(){
-		btn.style['background-color'] = 'blue';
-		btn.style['color'] = 'black';		
+		for(p in _btnMouseOverStyle)
+			btn.style[p] = _btnStyle[p];
 	}
 	return btn;
 }
