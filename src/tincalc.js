@@ -65,7 +65,7 @@ var _btnStyle = {
 var _btnMouseOverStyle = {
 	'background-color': '#003366',
 	'color': 'white',
-	'border': 'inset #4169e1 3px',
+	'border': 'inset #4169e1 3px'
 };
 
 
@@ -256,7 +256,7 @@ function _createButton(mainField, msgBar, txt, cmd){
 	btn.onmouseout = function(){
 		for(p in _btnMouseOverStyle)
 			btn.style[p] = _btnStyle[p];
-	}
+	};
 	return btn;
 }
 
