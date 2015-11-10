@@ -31,10 +31,10 @@ var _msgBarStyle = {
 	'margin-right': '20px',
 	'padding': '3px',
 	'font-family': 'sans-serif',
-	'font-size': '15px',
-	'font-weight': 'bold',
+	'font-size': '15px', 
+	'font-weight': 'bold', 
 	'cursor': 'default',
-	'border-bottom': 'thin dashed black',
+  	'border-bottom': 'thin dashed black',
 	'color': '#dc341c'
 };
 
@@ -57,7 +57,6 @@ var _btnStyle = {
 	'font-weight': 'bold',
 	'font-family': 'monospace',
 	'font-size': '25px',
-	'text-style': 'bold',
 	'color': 'black',
 	'cursor': 'pointer'
 };
@@ -70,51 +69,56 @@ var _btnMouseOverStyle = {
 
 
 function _setStyle(c, st){
-	for(p in st)
+	for(var p in st)
 		c.style[p] = st[p];
 }
 
-function createTincalc(box){
-	_setStyle(box, _boxStyle);
-	var mainField = document.createElement('div');
-	_setStyle(mainField, _mainFieldStyle);
-	box.appendChild(mainField);
-	var msgBar = document.createElement('div');
-	_setStyle(msgBar, _msgBarStyle);
-	box.appendChild(msgBar);
-	var COLS = 5;
-	var ROWS = 4;
-	var txts = [ 
-		['7', '8', '9', '+', '('],
-		['4', '5', '6', '-', ')'],
-		['1', '2', '3', '&times;', '&lArr;'],
-		['0', 'C', '=', '&divide;', '.']
-	];
-	var cmds = [
-		['7', '8', '9', '+', '('],
-		['4', '5', '6', '-', ')'],
-		['1', '2', '3', '*', 'back'],
-		['0', 'clear', '=', '/', '.']
-	];
-	var panel = document.createElement('div');
-	_setStyle(panel, _panelStyle);
-	for(var i = 0; i < ROWS; i ++){
-		var row = document.createElement('div');
-		row.style['display'] = 'table-row';
-		for(var j = 0; j < COLS; j ++)
-			row.appendChild(_createButton(mainField, msgBar, txts[i][j], cmds[i][j]));
-		panel.appendChild(row);
+function createTincalc(){
+	if(arguments.length == 0)
+		arguments = document.getElementsByClassName('tincalc');
+	for(var t = 0; t < arguments.length; t ++){
+		var box = arguments[t];
+		_setStyle(box, _boxStyle);
+		var mainField = document.createElement('div');
+		_setStyle(mainField, _mainFieldStyle);
+		box.appendChild(mainField);
+		var msgBar = document.createElement('div');
+		_setStyle(msgBar, _msgBarStyle);
+		box.appendChild(msgBar);
+		var COLS = 5;
+		var ROWS = 4;
+		var txts = [ 
+			['7', '8', '9', '+', '('],
+			['4', '5', '6', '-', ')'],
+			['1', '2', '3', '&times;', '&lArr;'],
+			['0', 'C', '=', '&divide;', '.']
+		];
+		var cmds = [
+			['7', '8', '9', '+', '('],
+			['4', '5', '6', '-', ')'],
+			['1', '2', '3', '*', 'back'],
+			['0', 'clear', '=', '/', '.']
+		];
+		var panel = document.createElement('div');
+		_setStyle(panel, _panelStyle);
+		for(var i = 0; i < ROWS; i ++){
+			var row = document.createElement('div');
+			row.style['display'] = 'table-row';
+			for(var j = 0; j < COLS; j ++)
+				row.appendChild(_createButton(mainField, msgBar, txts[i][j], cmds[i][j]));
+			panel.appendChild(row);
+		}
+		box.appendChild(panel);
 	}
-	box.appendChild(panel);
 }
 
 function _showMsg(msgBar, msg){
 	msgBar.innerHTML = msg;
 	setTimeout(
-			function(){
-				msgBar.innerHTML = '';
-			},
-			3000
+		function(){
+			msgBar.innerHTML = '';
+		},
+		3000
 	);
 }
 
