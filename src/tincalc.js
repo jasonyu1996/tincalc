@@ -1,73 +1,3 @@
-var _boxStyle = {
-	'background-color': '#a9a9a9',
-	'border': 'outset #dcdcdc 10px',
-	'border-radius': '40px',
-	'width': '500px'
-};
-
-var _mainFieldStyle = {
-	'width': '400px',
-	'height': '50px',
-	'background-color': '#c0c0c0',
-	'border': 'groove #696969 4px',
-	'border-radius': '10px',
-	'text-align': 'left',
-	'vertical-align': 'middle',
-	'margin': '20px',
-	'padding': '5px',
-	'font-family': 'monospace',
-	'font-size': '30px',
-	'font-weight': 'bold',
-	'color': '#000',
-	'cursor': 'default'
-};
-
-var _msgBarStyle = {
-	'width': '400px',
-	'height': '15px',
-	'text-align': 'left',
-	'vertical-align': 'middle',
-	'margin-left': '20px',
-	'margin-right': '20px',
-	'padding': '3px',
-	'font-family': 'sans-serif',
-	'font-size': '15px', 
-	'font-weight': 'bold', 
-	'cursor': 'default',
-  	'border-bottom': 'thin dashed black',
-	'color': '#dc341c'
-};
-
-var _panelStyle = {
-	'display': 'table',
-	'margin': '20px',
-	'border': 'groove #708090 5px',
-	'border-radius': '5px',
-	'border-spacing': '5px'
-};
-
-var _btnStyle = {
-	'width': '50px',
-	'height': '50px',
-	'border': 'outset #b0e0e6 3px',
-	'border-radius': '3px',
-	'background-color': '#33f',
-	'text-align': 'center',
-	'vertical-align': 'middle',
-	'font-weight': 'bold',
-	'font-family': 'monospace',
-	'font-size': '25px',
-	'color': 'black',
-	'cursor': 'pointer'
-};
-
-var _btnMouseOverStyle = {
-	'background-color': '#003366',
-	'color': 'white',
-	'border': 'inset #4169e1 3px'
-};
-
-
 function _setStyle(c, st){
 	for(var p in st)
 		c.style[p] = st[p];
@@ -78,13 +8,14 @@ function createTincalc(){
 		arguments = document.getElementsByClassName('tincalc');
 	for(var t = 0; t < arguments.length; t ++){
 		var box = arguments[t];
-		_setStyle(box, _boxStyle);
-		var mainField = document.createElement('div');
-		_setStyle(mainField, _mainFieldStyle);
-		box.appendChild(mainField);
-		var msgBar = document.createElement('div');
-		_setStyle(msgBar, _msgBarStyle);
-		box.appendChild(msgBar);
+		if(!box.className.match(new RegExp('(\\s|^)tincalc(\\s|$)')))
+			box.className += ' tincalc';
+		var field = document.createElement('div');
+		field.className = 'tincalc-field';
+		box.appendChild(field);
+		var bar = document.createElement('div');
+		bar.className = 'tincalc-bar';
+		box.appendChild(bar);
 		var COLS = 5;
 		var ROWS = 4;
 		var txts = [ 
@@ -100,23 +31,23 @@ function createTincalc(){
 			['0', 'clear', '=', '/', '.']
 		];
 		var panel = document.createElement('div');
-		_setStyle(panel, _panelStyle);
+		panel.className = 'tincalc-panel';
 		for(var i = 0; i < ROWS; i ++){
 			var row = document.createElement('div');
 			row.style['display'] = 'table-row';
 			for(var j = 0; j < COLS; j ++)
-				row.appendChild(_createButton(mainField, msgBar, txts[i][j], cmds[i][j]));
+				row.appendChild(_createButton(field, bar, txts[i][j], cmds[i][j]));
 			panel.appendChild(row);
 		}
 		box.appendChild(panel);
 	}
 }
 
-function _showMsg(msgBar, msg){
-	msgBar.innerHTML = msg;
+function _showMsg(bar, msg){
+	bar.innerHTML = msg;
 	setTimeout(
 		function(){
-			msgBar.innerHTML = '';
+			bar.innerHTML = '';
 		},
 		3000
 	);
@@ -126,10 +57,10 @@ function _numPart(c){
 	return (c >= '0' && c <= '9') || c == '.';
 }
 
-function _calc(mainField, msgBar){
+function _calc(field, bar){
 	ex = new Array();
 	s = new Array();
-	st = mainField.innerHTML;
+	st = field.innerHTML;
 	var rev = false;
 	for(var i = 0; i < st.length; ){
 		if(_numPart(st[i])){
@@ -139,7 +70,7 @@ function _calc(mainField, msgBar){
 			while(i < st.length && _numPart(st[i]));
 			var num = Number(st.substr(le, i - le));
 			if(isNaN(num)){
-				_showMsg(msgBar, 'Invalid input!'); // invalid number form
+				_showMsg(bar, 'Invalid input!'); // invalid number form
 				return;
 			}
 			ex.push(num);
@@ -151,7 +82,7 @@ function _calc(mainField, msgBar){
 			if((i == 0 || st[i - 1] == '*' || st[i - 1] == '/'
 						|| st[i - 1] == '(')){
 				if(i == st.length - 1 || (!_numPart(st[i + 1]) && st[i + 1] != '(')){
-					_showMsg(msgBar, 'Invalid input!'); // surplus heading +/- 
+					_showMsg(bar, 'Invalid input!'); // surplus heading +/- 
 					return;
 				}
 				if(st[i] == '-'){
@@ -184,7 +115,7 @@ function _calc(mainField, msgBar){
 			for(j = s.length - 1; j >= 0 && s[j] != '(' && s[j] != '['; j --)
 				ex.push(s[j]);
 			if(j == -1){
-				_showMsg(msgBar, 'Invalid input!'); // ( and ) do not match
+				_showMsg(bar, 'Invalid input!'); // ( and ) do not match
 				return;
 			}
 			if(s[j] == '[')
@@ -192,13 +123,13 @@ function _calc(mainField, msgBar){
 			s.length = j; // pop the tails
 			++ i;
 		} else{
-			_showMsg(msgBar, 'Invalid input!'); // illegal character
+			_showMsg(bar, 'Invalid input!'); // illegal character
 			return;
 		}
 	}
 	for(var i = s.length - 1; i >= 0; i --){
 		if(s[i] == '(' || s[i] == '['){
-			_showMsg(msgBar, 'Invalid input!'); // ( and ) do not match 
+			_showMsg(bar, 'Invalid input!'); // ( and ) do not match 
 			return;
 		}
 		ex.push(s[i]);
@@ -209,7 +140,7 @@ function _calc(mainField, msgBar){
 			s.push(ex[i]);
 		} else{
 			if(s.length < 2){
-				_showMsg(msgBar, 'Invalid input!'); // lacking operands
+				_showMsg(bar, 'Invalid input!'); // lacking operands
 				return;
 			}
 			if(ex[i] == '+')
@@ -219,7 +150,7 @@ function _calc(mainField, msgBar){
 			else if(ex[i] == '*')
 				s[s.length - 2] = s[s.length - 2] * s[s.length - 1];
 			else if(s[s.length - 1] == 0){
-				_showMsg(msgBar, 'A division by zero occurred!');
+				_showMsg(bar, 'A division by zero occurred!');
 				return;
 			} else
 				s[s.length - 2] = s[s.length - 2] / s[s.length - 1];
@@ -227,39 +158,32 @@ function _calc(mainField, msgBar){
 		}
 	}
 	if(s.length != 1){
-		_showMsg(msgBar, 'Invalid input!'); // surplus operands
+		_showMsg(bar, 'Invalid input!'); // surplus operands
 		return;
 	}
-	mainField.innerHTML = String(s[0]);
+	field.innerHTML = String(s[0]);
 }
 
-function _react(mainField, msgBar, cmd){
+function _react(field, bar, cmd){
 	if(cmd == 'back'){
-		if(mainField.innerHTML != '')
-			mainField.innerHTML = mainField.innerHTML.substr(0, mainField.innerHTML.length - 1);
+		if(field.innerHTML != '')
+			field.innerHTML = field.innerHTML.substr(0, field.innerHTML.length - 1);
 	} else if(cmd == 'clear'){
-		mainField.innerHTML = '';
+		field.innerHTML = '';
 	} else if(cmd == '='){
-		_calc(mainField, msgBar);
+		_calc(field, bar);
 	} else{
-		mainField.innerHTML += cmd;
+		field.innerHTML += cmd;
 	}
 }
 
-function _createButton(mainField, msgBar, txt, cmd){
+function _createButton(field, bar, txt, cmd){
 	var btn = document.createElement('div');
+	btn.className = 'tincalc-btn';
 	btn.innerHTML = txt;
-	_setStyle(btn, _btnStyle);
 	btn.style['display'] = 'table-cell';
 	btn.onclick = function(){
-		_react(mainField, msgBar, cmd);
-	};
-	btn.onmouseover = function(){
-		_setStyle(btn, _btnMouseOverStyle);
-	};
-	btn.onmouseout = function(){
-		for(p in _btnMouseOverStyle)
-			btn.style[p] = _btnStyle[p];
+		_react(field, bar, cmd);
 	};
 	return btn;
 }

@@ -1,0 +1,70 @@
+.tincalc {
+	background-color: #a9a9a9;
+	border: outset #dcdcdc 10px;
+	border-radius: 40px;
+	width: 500px
+}
+
+.tincalc .tincalc-field {
+	width: 400px;
+	height: 50px;
+	background-color: #c0c0c0;
+	border: groove #696969 4px;
+	border-radius: 10px;
+	text-align: left;
+	vertical-align: middle;	
+	margin: 20px;
+	padding: 5px;
+	font-family: monospace;
+	font-size: 30px;
+	font-weight: bold;
+	color: #000;
+	cursor: default
+}
+
+.tincalc .tincalc-bar {
+	width: 400px;
+	height: 15px;
+	text-align: left;
+	vertical-align: middle;
+	margin-left: 20px;
+	margin-right: 20px;
+	padding: 3px;
+	font-family: sans-serif;
+	font-size: 15px;
+	font-weight: bold;
+	cursor: default;
+  	border-bottom: thin dashed black;
+	color: #dc341c
+}
+
+.tincalc .tincalc-panel {
+	display: table;
+	margin: 20px;
+	border: groove #708090 5px;
+	border-radius: 5px;
+	border-spacing: 5px
+}
+
+.tincalc .tincalc-btn {
+	width: 50px;
+	height: 50px;
+	border: outset #b0e0e6 3px;
+	border-radius: 3px;
+	background-color: #33f;
+	text-align: center;
+	vertical-align: middle;
+	font-weight: bold;
+	font-family: monospace;
+	font-size: 25px;
+	color: black;
+	cursor: pointer
+}
+
+.tincalc .tincalc-btn:hover {
+	background-color: #003366;
+	color: white;
+	border: inset #4169e1 3px
+}
+
+
